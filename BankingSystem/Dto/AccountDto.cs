@@ -8,6 +8,7 @@ namespace BankingSystem.Dto
         public int AccountId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string Email { get; set; }
         public double CurrentBalance { get; set; }
         public int AccountNumber { get; set; }
     }

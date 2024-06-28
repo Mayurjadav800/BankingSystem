@@ -10,11 +10,13 @@ namespace BankingSystem.Repository
     {
         private readonly IMapper _mapper;
         private readonly AccountDbContext _accountDbContext;
+        private readonly IEmailRepository _emailRepository;
 
-        public WithdraRepository(IMapper mapper, AccountDbContext accountDbContext)
+        public WithdraRepository(IMapper mapper, AccountDbContext accountDbContext,IEmailRepository emailRepository)
         {
             _mapper = mapper;
             _accountDbContext = accountDbContext;
+            _emailRepository = emailRepository;
         }
         public async Task<WithdrawDto> CreateWithdraw(WithdrawDto withdrawDto)
         {
@@ -43,6 +45,14 @@ namespace BankingSystem.Repository
                     _accountDbContext.Account.Update(account);
                     await _accountDbContext.SaveChangesAsync();
                     transcation.CommitAsync();
+                    var mailRequest = new MailRequest()
+                    {
+                        ToEmail = account.Email,
+                        Subject = "Withdrawal Confirmation",
+                        Body = $"{account.FirstName}, your withdrawal of {withdrawDto.WithdrawAmount} has been successfully processed. Your new balance is {account.CurrentBalance}."
+                    };
+
+                    await _emailRepository.SendEmailAsync(mailRequest);
                     return _mapper.Map<WithdrawDto>(withdrawDto);
                 }
                 catch (Exception ex)

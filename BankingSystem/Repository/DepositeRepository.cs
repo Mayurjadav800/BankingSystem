@@ -12,11 +12,13 @@ namespace BankingSystem.Repository
     {
         private readonly IMapper _mapper;
         private readonly AccountDbContext _accountDbContext;
+        private readonly IEmailRepository _emailRepository;
 
-        public DepositeRepository(IMapper mapper, AccountDbContext accountDbContext)
+        public DepositeRepository(IMapper mapper, AccountDbContext accountDbContext,IEmailRepository emailRepository)
         {
             _mapper = mapper;
             _accountDbContext = accountDbContext;
+            _emailRepository = emailRepository;
         }
         public async Task<DepositeDto> CreateDepository(DepositeDto depositeDto)
         {
@@ -43,7 +45,16 @@ namespace BankingSystem.Repository
                     account.CurrentBalance = account.CurrentBalance + depositeDto.DepositeAmount;
                     _accountDbContext.Account.Update(account);
                     await _accountDbContext.SaveChangesAsync();
-                    transaction.CommitAsync();
+                    transaction.Commit();
+                    var mailRequest = new MailRequest()
+                    {
+                        ToEmail = account.Email,
+                        Subject = "Deposite Confirmation",
+                        Body = $"{account.FirstName},your deposite of {depositeDto.DepositeAmount} has succesfully processed."
+
+                    };
+                    await _emailRepository.SendEmailAsync(mailRequest);
+
                     return _mapper.Map<DepositeDto>(depositeDto);
                 }
                 catch (Exception)

@@ -1,13 +1,16 @@
 using AutoMapper;
 using BankingSystem;
 using BankingSystem.Data;
+using BankingSystem.Model;
 using BankingSystem.Repository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 //IMapper mapper = MappingConfiguration.RegisterMaps().CreateMapper();
-
+builder.Host.UseSerilog((context, configuration) => configuration.ReadFrom.Configuration(context.Configuration));
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -16,6 +19,8 @@ builder.Services.AddEndpointsApiExplorer();
 
 var provider = builder.Services.BuildServiceProvider();
 var config = provider.GetService<IConfiguration>();
+
+builder.Services.Configure<EmailSetting>(builder.Configuration.GetSection("EmailSetting"));
 builder.Services.AddSwaggerGen(); builder.Services.AddDbContext<AccountDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("dbcs")));
 
@@ -25,6 +30,9 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IDepositeRepository, DepositeRepository>();
 builder.Services.AddScoped<IWithdrawRepository, WithdraRepository>();
 builder.Services.AddScoped<ITransferRepository, TransferRepository>();
+builder.Services.AddTransient<IEmailRepository,EmailRepository>();
+
+
 
 var app = builder.Build();
 

@@ -18,9 +18,12 @@ namespace BankingSystem.Model
         [Required]
         [MaxLength(50)]
         public string LastName { get; set; }
+        [Required]
+        public string Email { get; set; }
 
         [Required]
         public double CurrentBalance { get; set; }
+        
 
         [Required]
         public int AccountNumber { get; set; }

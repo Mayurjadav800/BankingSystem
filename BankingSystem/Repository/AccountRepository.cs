@@ -10,7 +10,6 @@ namespace BankingSystem.Repository
     {
         private readonly IMapper _mapper;
         private readonly AccountDbContext _accountDbContext;
-
         public AccountRepository(IMapper mapper,AccountDbContext accountDbContext)
         {
             _mapper = mapper;
@@ -20,10 +19,13 @@ namespace BankingSystem.Repository
         {
             var existingAccount = await _accountDbContext.Account
         .FirstOrDefaultAsync(a => a.AccountNumber == accountDto.AccountNumber);
-
             if (existingAccount != null)
             {
                 throw new Exception("Account number already exists");
+            }
+            if (accountDto.CurrentBalance < 0)
+            {
+                throw new Exception("Current balance cannot be negative");
             }
             var account = _mapper.Map<Account>(accountDto);
             account.CurrentBalance = Math.Round(accountDto.CurrentBalance, 2);
@@ -31,7 +33,6 @@ namespace BankingSystem.Repository
             await _accountDbContext.SaveChangesAsync();
             return _mapper.Map<AccountDto>(account);
         }
-
         public async Task<AccountDto> GetAccountById(int Id)
         {
             var account = await _accountDbContext.Account.FindAsync(Id);
@@ -41,7 +42,6 @@ namespace BankingSystem.Repository
             }
             return _mapper.Map<AccountDto>(account);
         }
-
         public async Task<List<AccountDto>> GetAllAccount()
         {
             var account = await _accountDbContext.Account.ToListAsync();

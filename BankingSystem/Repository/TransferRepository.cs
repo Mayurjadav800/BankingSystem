@@ -10,14 +10,24 @@ namespace BankingSystem.Repository
     {
         private readonly IMapper _mapper;
         private readonly AccountDbContext _accountDbContext;
+        private readonly IEmailRepository _emailRepository;
 
-        public TransferRepository(IMapper mapper, AccountDbContext accountDbContext)
+        public TransferRepository(IMapper mapper, AccountDbContext accountDbContext,IEmailRepository emailRepository)
         {
             _mapper = mapper;
             _accountDbContext = accountDbContext;
+            _emailRepository = emailRepository;
         }
         public async Task<TransferDto> CreateTransfer(TransferDto transferDto)
         {
+            if (transferDto.TransferAmount <= 0)
+            {
+                throw new ArgumentException("Transfer amount must be greater than zero");
+            }
+            if(transferDto.TransferAmount <= 0)
+            {
+                throw new ArgumentException("Receiver amount must be greater than zero");
+            }
             using (var transaction = await _accountDbContext.Database.BeginTransactionAsync())
             {
                 try
@@ -43,11 +53,30 @@ namespace BankingSystem.Repository
                      account2.CurrentBalance = account2.CurrentBalance + transferDto.TransferAmount;
                     _accountDbContext.Account.Update(account2);
                     var transfer = _mapper.Map<Transfer>(transferDto);
-                    transfer.SenderId = account1.Id;
-                    transfer.ReceiverId = account2.Id;
-                    await _accountDbContext.Transfer.AddAsync(transfer);
+                    transfer.AccountId = account1.Id;
+                   
+                   await _accountDbContext.Transfer.AddAsync(transfer);
+                    //_accountDbContext.SaveChanges();
                     await _accountDbContext.SaveChangesAsync();
                      transaction.Commit();
+                    var mailRequest = new MailRequest()
+                    {
+                        ToEmail = account1.Email,
+                        Subject = "Transfer Confirmation",
+                        Body = $"{account1.FirstName}, you have successfully transferred {transferDto.TransferAmount} to {account2.FirstName}. Your new balance is {account1.CurrentBalance}."
+                    };
+                    await _emailRepository.SendEmailAsync(mailRequest);
+
+                    var mailRequest1 = new MailRequest()
+                    {
+                        ToEmail = account2.Email,
+                        Subject = "Transfer Confirmation",
+                        Body = $"{account2.FirstName}, you have received {transferDto.TransferAmount} from {account1.FirstName}. Your new balance is {account2.CurrentBalance}."
+                    };
+                    await _emailRepository.SendEmailAsync(mailRequest1);
+
+
+
                     var transfers = _mapper.Map<TransferDto>(transfer);
                     return transfers;
                 }
