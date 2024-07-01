@@ -1,5 +1,6 @@
 ﻿using BankingSystem.Dto;
 using BankingSystem.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +17,7 @@ namespace BankingSystem.Controllers
             _logger = logger;
         }
         [HttpPost("Deposite")]
+        [Authorize]
         public async Task<ActionResult<DepositeDto>> CreateDeposite([FromBody]DepositeDto depositeDto)
         {
             try

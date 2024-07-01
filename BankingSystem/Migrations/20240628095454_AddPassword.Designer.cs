@@ -4,6 +4,7 @@ using BankingSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BankingSystem.Migrations
 {
     [DbContext(typeof(AccountDbContext))]
-    partial class AccountDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240628095454_AddPassword")]
+    partial class AddPassword
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,34 +89,6 @@ namespace BankingSystem.Migrations
                     b.ToTable("Deposite");
                 });
 
-            modelBuilder.Entity("BankingSystem.Model.Otp", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AccountId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("ExpiryDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsUsed")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccountId");
-
-                    b.ToTable("Otp");
-                });
-
             modelBuilder.Entity("BankingSystem.Model.Transfer", b =>
                 {
                     b.Property<int>("Id")
@@ -179,17 +154,6 @@ namespace BankingSystem.Migrations
                     b.Navigation("Account");
                 });
 
-            modelBuilder.Entity("BankingSystem.Model.Otp", b =>
-                {
-                    b.HasOne("BankingSystem.Model.Account", "Account")
-                        .WithMany("Otps")
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Account");
-                });
-
             modelBuilder.Entity("BankingSystem.Model.Transfer", b =>
                 {
                     b.HasOne("BankingSystem.Model.Account", "Account")
@@ -215,8 +179,6 @@ namespace BankingSystem.Migrations
             modelBuilder.Entity("BankingSystem.Model.Account", b =>
                 {
                     b.Navigation("Deposites");
-
-                    b.Navigation("Otps");
 
                     b.Navigation("Transfers");
 

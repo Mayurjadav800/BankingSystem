@@ -14,12 +14,13 @@ namespace BankingSystem.Model
 
         [Required]
         public int SenderId { get; set; }
+      
 
         [Required]
         public int ReceiverId { get; set; }
 
         [Required]
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
 
         [Required]
         public double TransferAmount { get; set; }

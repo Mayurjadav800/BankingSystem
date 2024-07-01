@@ -1,6 +1,7 @@
 ﻿using BankingSystem.Dto;
 using BankingSystem.Model;
 using BankingSystem.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,6 +18,7 @@ namespace BankingSystem.Controllers
             _logger = logger;
         }
         [HttpPost("CreateWithdraw")]
+        [Authorize]
         public async Task<ActionResult<WithdrawDto>>Create([FromBody] WithdrawDto withdrawDto)
         {
             try

@@ -2,6 +2,7 @@
 using BankingSystem.Data;
 using BankingSystem.Dto;
 using BankingSystem.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,13 +12,16 @@ namespace BankingSystem.Controllers
     {
         private readonly IAccountRepository _accountRepository;
         private readonly ILogger<AccountController> _logger;
+        private readonly IAuthenticationRepository _authenticationRepository;
 
-        public AccountController(IAccountRepository accountRepository,ILogger<AccountController>logger)
+        public AccountController(IAccountRepository accountRepository,ILogger<AccountController>logger,IAuthenticationRepository authenticationRepository)
         {
             _accountRepository = accountRepository;
             _logger = logger;
+            _authenticationRepository = authenticationRepository;
         }
         [HttpGet("GetAllAccount")]
+      // [Authorize]
         public async Task<object> Get()
         {
             try
@@ -32,6 +36,7 @@ namespace BankingSystem.Controllers
             }
         }
         [HttpGet("GetById")]
+        [Authorize]
         public async Task<object> GetAccountById(int Id)
         {
             try
@@ -46,7 +51,28 @@ namespace BankingSystem.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        [HttpPost("Login")]
+        //[AllowAnonymous]
+        
+        public async Task<ActionResult<string>> Login([FromBody] LogginDto logginDto)
+        {
+            try
+            {
+                var token = await _authenticationRepository.CreateAuthentication(logginDto);
+                return Ok(token);
+            }
+            //catch (UnauthorizedAccessException ex)
+            //{
+            //    return Unauthorized(ex.Message);
+            //}
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Login failed");
+                return StatusCode(500, "Internal server error");
+            }
+        }
         [HttpPost("CreateAccount")]
+        [Authorize]
         public async Task<ActionResult<AccountDto>>Create([FromBody] AccountDto accountDto)
         {
             try

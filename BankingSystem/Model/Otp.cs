@@ -3,22 +3,23 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BankingSystem.Model
 {
-    public class Deposite
+    public class Otp
     {
         [Key]
         public int Id { get; set; }
 
-        //// Foreign key
+        [Required]
         [ForeignKey("Account")]
         public int AccountId { get; set; }
-
         [Required]
-        public double DepositeAmount { get; set; }
+        [Range(100000, 999999, ErrorMessage = "OTP Code must be a 6-digit number")]
+        public string Code { get; set; }
         [Required]
+        public DateTime ExpiryDate { get; set; }
+        public bool IsUsed { get; set; }
 
-        public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
-
-        // Navigation property
         public virtual Account Account { get; set; }
+
+       
     }
 }

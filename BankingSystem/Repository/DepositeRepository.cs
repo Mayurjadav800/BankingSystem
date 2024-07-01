@@ -38,11 +38,13 @@ namespace BankingSystem.Repository
                         throw new Exception("Account not found");
                     }
                     var deposite = _mapper.Map<Deposite>(depositeDto);
+                   // deposite.CreatedAt = DateTime.UtcNow;
                     deposite.AccountId = account.Id;
                     await _accountDbContext.Deposite.AddAsync(deposite);
                     await _accountDbContext.SaveChangesAsync();
                     var users = _mapper.Map<DepositeDto>(deposite);
                     account.CurrentBalance = account.CurrentBalance + depositeDto.DepositeAmount;
+                   
                     _accountDbContext.Account.Update(account);
                     await _accountDbContext.SaveChangesAsync();
                     transaction.Commit();

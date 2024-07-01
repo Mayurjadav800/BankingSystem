@@ -20,11 +20,11 @@ namespace BankingSystem.Model
         public string LastName { get; set; }
         [Required]
         public string Email { get; set; }
-
+        [Required]
+        public string Password { get; set; }
+       
         [Required]
         public double CurrentBalance { get; set; }
-        
-
         [Required]
         public int AccountNumber { get; set; }
 
@@ -32,5 +32,6 @@ namespace BankingSystem.Model
         public virtual ICollection<Deposite> Deposites { get; set; }
         public virtual ICollection<Transfer> Transfers { get; set; }
         public virtual ICollection<Withdraw> Withdraws { get; set; }
+        public virtual ICollection<Otp> Otps { get; set; }
     }
 }

@@ -15,9 +15,9 @@ namespace BankingSystem.Model
 
         [Required]
         public double WithdrawAmount { get; set; }
-
         [Required]
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
+
 
         // Navigation property
         public virtual Account Account { get; set; }

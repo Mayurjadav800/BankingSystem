@@ -28,11 +28,19 @@ namespace BankingSystem.Data
                 .HasMany(a => a.Withdraws)
                 .WithOne(w => w.Account)
                 .HasForeignKey(w => w.AccountId);
+
+            modelBuilder.Entity<Otp>()
+               .HasOne(o => o.Account)
+               .WithMany(a => a.Otps)
+               .HasForeignKey(o => o.AccountId);
+
         }
         public DbSet<Account> Account { get; set; }
         public DbSet<Deposite> Deposite { get; set; }
         public DbSet<Transfer>Transfer { get; set; }
         public DbSet<Withdraw>Withdraw { get; set; }
+        public DbSet<Otp> Otp { get; set; }
+
     }
 
 }
