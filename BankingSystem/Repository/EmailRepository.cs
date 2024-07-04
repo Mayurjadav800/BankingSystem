@@ -15,20 +15,17 @@ namespace BankingSystem.Repository
         {
             _emailSetting = options.Value;
         }
-
         public async Task SendEmailAsync(MailRequest mailRequest)
         {
             var email = new MimeMessage();
             email.Sender = MailboxAddress.Parse(_emailSetting.Email);
             email.To.Add(MailboxAddress.Parse(mailRequest.ToEmail));
             email.Subject = mailRequest.Subject;
-
             var builder = new BodyBuilder
             {
                 HtmlBody = mailRequest.Body
             };
             email.Body = builder.ToMessageBody();
-
             using var smtp = new SmtpClient();
              smtp.Connect(_emailSetting.Host, _emailSetting.Port, SecureSocketOptions.StartTls);
              smtp.Authenticate(_emailSetting.Email, _emailSetting.Password);

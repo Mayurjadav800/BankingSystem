@@ -17,7 +17,7 @@ namespace BankingSystem.Controllers
             _withdrawRepository = withdrawRepository;
             _logger = logger;
         }
-        [HttpPost("CreateWithdraw")]
+       [HttpPost("CreateWithdraw")]
         [Authorize]
         public async Task<ActionResult<WithdrawDto>>Create([FromBody] WithdrawDto withdrawDto)
         {

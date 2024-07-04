@@ -16,6 +16,7 @@ namespace BankingSystem.Model
         public string Code { get; set; }
         [Required]
         public DateTime ExpiryDate { get; set; }
+        
         public bool IsUsed { get; set; }
 
         public virtual Account Account { get; set; }

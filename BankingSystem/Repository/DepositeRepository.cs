@@ -31,7 +31,7 @@ namespace BankingSystem.Repository
                 try
                 {
                     var account = await _accountDbContext.Account
-                        .FirstOrDefaultAsync(e => e.AccountId == depositeDto.AccountId);
+                        .FirstOrDefaultAsync(e => e.Id == depositeDto.AccountId);
 
                     if (account == null)
                     {
@@ -39,7 +39,7 @@ namespace BankingSystem.Repository
                     }
                     var deposite = _mapper.Map<Deposite>(depositeDto);
                    // deposite.CreatedAt = DateTime.UtcNow;
-                    deposite.AccountId = account.Id;
+                    //deposite.AccountId = account.Id;
                     await _accountDbContext.Deposite.AddAsync(deposite);
                     await _accountDbContext.SaveChangesAsync();
                     var users = _mapper.Map<DepositeDto>(deposite);

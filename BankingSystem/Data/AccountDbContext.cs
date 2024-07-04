@@ -11,28 +11,27 @@ namespace BankingSystem.Data
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Account and Deposite relationship
             modelBuilder.Entity<Account>()
-                .HasMany(a => a.Deposites)
-                .WithOne(d => d.Account)
-                .HasForeignKey(d => d.AccountId);
+               .HasMany(a => a.Deposites)
+               .WithOne(d => d.Account)
+               .HasForeignKey(d => d.AccountId);
 
-            // Account and Transfer relationship
             modelBuilder.Entity<Account>()
                 .HasMany(a => a.Transfers)
                 .WithOne(t => t.Account)
                 .HasForeignKey(t => t.AccountId);
 
-            // Account and Withdraw relationship
             modelBuilder.Entity<Account>()
                 .HasMany(a => a.Withdraws)
                 .WithOne(w => w.Account)
                 .HasForeignKey(w => w.AccountId);
 
-            modelBuilder.Entity<Otp>()
-               .HasOne(o => o.Account)
-               .WithMany(a => a.Otps)
-               .HasForeignKey(o => o.AccountId);
+            modelBuilder.Entity<Account>()
+                .HasMany(a => a.Otps)
+                .WithOne(o => o.Account)
+                .HasForeignKey(o => o.AccountId);
+
+            base.OnModelCreating(modelBuilder);
 
         }
         public DbSet<Account> Account { get; set; }

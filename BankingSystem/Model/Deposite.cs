@@ -18,7 +18,7 @@ namespace BankingSystem.Model
 
         public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
 
-        // Navigation property
+        // Navigation 
         public virtual Account Account { get; set; }
     }
 }

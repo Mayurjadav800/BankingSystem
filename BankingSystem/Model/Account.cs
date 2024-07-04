@@ -8,8 +8,8 @@ namespace BankingSystem.Model
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        public int AccountId { get; set; }
+       // [Required]
+        //public int AccountId { get; set; }
 
         [Required]
         [MaxLength(50)]
@@ -22,13 +22,14 @@ namespace BankingSystem.Model
         public string Email { get; set; }
         [Required]
         public string Password { get; set; }
-       
+        [Required]
+        public DateTime DateOfBirth { get; set; }
         [Required]
         public double CurrentBalance { get; set; }
         [Required]
         public int AccountNumber { get; set; }
 
-        // Navigation properties
+        // Navigation 
         public virtual ICollection<Deposite> Deposites { get; set; }
         public virtual ICollection<Transfer> Transfers { get; set; }
         public virtual ICollection<Withdraw> Withdraws { get; set; }

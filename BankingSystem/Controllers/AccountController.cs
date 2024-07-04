@@ -21,7 +21,7 @@ namespace BankingSystem.Controllers
             _authenticationRepository = authenticationRepository;
         }
         [HttpGet("GetAllAccount")]
-      // [Authorize]
+        [Authorize]
         public async Task<object> Get()
         {
             try
@@ -52,19 +52,15 @@ namespace BankingSystem.Controllers
             }
         }
         [HttpPost("Login")]
-        //[AllowAnonymous]
-        
-        public async Task<ActionResult<string>> Login([FromBody] LogginDto logginDto)
+        [AllowAnonymous]
+         public async Task<ActionResult<string>> Login([FromBody] LogginDto logginDto)
         {
             try
             {
+                _logger.LogInformation("Create API for loggin");
                 var token = await _authenticationRepository.CreateAuthentication(logginDto);
                 return Ok(token);
             }
-            //catch (UnauthorizedAccessException ex)
-            //{
-            //    return Unauthorized(ex.Message);
-            //}
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Login failed");

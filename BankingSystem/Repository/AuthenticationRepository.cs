@@ -49,8 +49,6 @@ namespace BankingSystem.Repository
             {
                 throw;
             }
-            
-
         }
     }
 }

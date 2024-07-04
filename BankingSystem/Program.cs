@@ -1,13 +1,11 @@
-using AutoMapper;
-using BankingSystem;
 using BankingSystem.Data;
 using BankingSystem.Model;
 using BankingSystem.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Quartz;
 using Serilog;
 using System.Text;
 
@@ -79,14 +77,32 @@ builder.Services.AddScoped<IWithdrawRepository, WithdraRepository>();
 builder.Services.AddScoped<ITransferRepository, TransferRepository>();
 builder.Services.AddTransient<IEmailRepository,EmailRepository>();
 
-
 builder.Services.AddScoped<IOtpRepository, OtpRepository>();
 
 builder.Services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
 
-var app = builder.Build();
+// Configure Quartz
+builder.Services.AddQuartz(q =>
+{
+    // Use a Scoped container to create jobs. 
+    // base Quartz scheduler, job and trigger configuration
+    q.UseMicrosoftDependencyInjectionJobFactory();
 
-// Configure the HTTP request pipeline.
+    // Register the job, loading the schedule from configuration
+    var jobKey = new JobKey("birthdayEmailJob", "group1");
+    q.AddJob<BirthDayEmailJob>(opts => opts.WithIdentity(jobKey));
+
+    q.AddTrigger(opts => opts
+        .ForJob(jobKey)
+        .WithIdentity("birthdayEmailTrigger", "group1")
+        //This Cron interval can be described as "run every minute" (when second is zero)
+        .WithCronSchedule("0 05 18 * * ?"));
+});
+
+// Add the Quartz hosted service
+// when shutting down we want jobs to complete......
+builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
+var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -100,3 +116,8 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+
+
+
+

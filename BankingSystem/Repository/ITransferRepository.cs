@@ -4,7 +4,6 @@ namespace BankingSystem.Repository
 {
     public interface ITransferRepository
     {
-       Task<TransferDto> CreateTransfer(TransferDto transferDto);
-       // Task<TransferDto> CreateTransfer(TransferDto transferDto, string otpCode);
+       Task<object> CreateTransfer(TransferDto transferDto);
     }
 }

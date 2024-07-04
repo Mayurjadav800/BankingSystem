@@ -19,7 +19,7 @@ namespace BankingSystem.Controllers
             _otpRepository = otpRepository;
         }
         [HttpPost("CreateForTransfer")]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult<TransferDto>> Create([FromBody] TransferDto transferDto)
         {
             try
@@ -34,26 +34,5 @@ namespace BankingSystem.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
-
-
-
-        //[HttpPost("create")]
-        //public async Task<IActionResult> CreateTransfer([FromBody] TransferDto transferDto, string otpCode)
-        //{
-        //    try
-        //    {
-        //        var transfer = await _transferRepository.CreateTransfer(transferDto, otpCode);
-        //        return Ok(transfer);
-        //    }
-        //    catch (ArgumentException ex)
-        //    {
-        //        return BadRequest(new { Message = ex.Message });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, new { Message = ex.Message });
-        //    }
-        //}
     }
 }

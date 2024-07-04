@@ -29,7 +29,6 @@ namespace BankingSystem.Repository
             }
             var account = _mapper.Map<Account>(accountDto);
             account.CurrentBalance = Math.Round(accountDto.CurrentBalance, 2);
-            //account.Password = accountDto.Password;
             await _accountDbContext.AddAsync(account);
             await _accountDbContext.SaveChangesAsync();
             return _mapper.Map<AccountDto>(account);

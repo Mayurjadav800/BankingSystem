@@ -10,14 +10,13 @@ namespace BankingSystem.Controllers
     {
         private readonly IOtpRepository _otpRepository;
         private readonly ILogger<OtpController> _logger;
-
         public OtpController(IOtpRepository otpRepository,ILogger<OtpController>logger)
         {
             _otpRepository = otpRepository;
             _logger = logger;
         }
         [HttpPost("Otp-Generate")]
-        //[Authorize]
+       [Authorize]
         public async Task<IActionResult> GenerateOtp(int accountId)
         {
             try
@@ -33,7 +32,7 @@ namespace BankingSystem.Controllers
             }
         }
         [HttpPost("verify")]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> VerifyOtp([FromBody] OtpDto otpDto)
         {
             try
@@ -48,8 +47,5 @@ namespace BankingSystem.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
-
-
-
     }
 }

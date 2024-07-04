@@ -24,16 +24,21 @@ namespace BankingSystem.Repository
             {
                 throw new ArgumentException("Deposite amount must be greater than zero");
             }
+          
             using (var transcation = await _accountDbContext.Database.BeginTransactionAsync())
             {
                 try
                 {
                     var account = await _accountDbContext.Account
-                        .FirstOrDefaultAsync(e => e.AccountId == withdrawDto.AccountId);
+                        .FirstOrDefaultAsync(e => e.Id == withdrawDto.AccountId);
 
                     if (account == null)
                     {
                         throw new Exception("Account not found");
+                    }
+                    if (withdrawDto.WithdrawAmount > account.CurrentBalance)
+                    {
+                        throw new Exception("Insufficient funds.");
                     }
                     var withdraw = _mapper.Map<Withdraw>(withdrawDto);
                     withdraw.AccountId = account.Id;

@@ -16,20 +16,18 @@ namespace BankingSystem.Repository
             _accountDbContext = accountDbContext;
             _emailRepository = emailRepository;
         }
-      
-
         public async Task<string> GenerateOtp(int accountId)
         {
             try
             {
-                var account = await _accountDbContext.Account.Where(e=>e.AccountId == accountId).FirstOrDefaultAsync();
+                var account = await _accountDbContext.Account.Where(e=>e.Id == accountId).FirstOrDefaultAsync();
               
                 if (account == null)
                 {
                     throw new ArgumentException($"Account with ID {accountId} does not exist.");
                 }
                 var existingOtp = await _accountDbContext.Otp
-                .Where(e => e.AccountId == accountId && e.ExpiryDate > DateTime.UtcNow)
+                .Where(e => e.AccountId == accountId && e.ExpiryDate > DateTime.Now)
                 .FirstOrDefaultAsync();
                 if (existingOtp != null)
                 {
@@ -38,16 +36,13 @@ namespace BankingSystem.Repository
                 var otpCode = GenerateRandomOtp();
                 var otp = new Otp
                 {
-                    AccountId = account.AccountId,
+                    AccountId = account.Id,
                     Code = otpCode,
-                    ExpiryDate = DateTime.UtcNow.AddMinutes(2),
+                    ExpiryDate = DateTime.Now.AddMinutes(2),
                     IsUsed = false
                 };
-                //otp.IsUsed = true;
                 _accountDbContext.Otp.Add(otp);
                 await _accountDbContext.SaveChangesAsync();
-
-                //var account = await _accountDbContext.Account.FindAsync(accountId);
                 if (account != null)
                 {
                     var mailRequest = new MailRequest()
@@ -58,14 +53,12 @@ namespace BankingSystem.Repository
                     };
                     await _emailRepository.SendEmailAsync(mailRequest);
                 }
-
                 return otp.Code;
             }
             catch(Exception ex)
             {
                 throw ex;
             }
-            
         }
         private string GenerateRandomOtp()
         {
@@ -77,19 +70,15 @@ namespace BankingSystem.Repository
         {
             try
             {
-                var account = await _accountDbContext.Account.Where(e => e.AccountId == accountId).FirstOrDefaultAsync();
+                var account = await _accountDbContext.Account.Where(e => e.Id == accountId).FirstOrDefaultAsync();
 
                 if (account == null)
                 {
                     throw new ArgumentException($"Account with ID {accountId} does not exist.");
                 }
 
-                //var otp = await _accountDbContext.Otp
-                //    .Where(e => e.AccountId == account.Id && e.Code == otpCode && e.ExpiryDate > DateTime.UtcNow)
-                //    .FirstOrDefaultAsync();
-
                 var otp = await _accountDbContext.Otp
-                .Where(e => e.AccountId == account.Id && e.Code == otpCode && e.ExpiryDate > DateTime.UtcNow)
+                .Where(e => e.AccountId == accountId && e.Code == otpCode && e.ExpiryDate > DateTime.Now)
                 .FirstOrDefaultAsync();
 
                 if (otp != null)
@@ -97,6 +86,7 @@ namespace BankingSystem.Repository
                     otp.IsUsed = true;
                     _accountDbContext.Otp.Update(otp);
                     await _accountDbContext.SaveChangesAsync();
+                   
                     return true; 
                 }
 
@@ -104,11 +94,9 @@ namespace BankingSystem.Repository
             }
             catch (Exception ex)
             {
-               
+
                 throw new Exception("Error verifying OTP", ex);
             }
         }
-
-
     }
 }

@@ -7,6 +7,5 @@ namespace BankingSystem.Repository
         Task<List<AccountDto>> GetAllAccount();
         Task<AccountDto> GetAccountById(int Id);
         Task<AccountDto> CreateAccount(AccountDto accountDto);
-
     }
 }
