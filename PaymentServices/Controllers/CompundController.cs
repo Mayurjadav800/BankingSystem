@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using PaymentMicroServices.Dto;
 using PaymentMicroServices.Repository;
 
@@ -12,7 +13,23 @@ namespace PaymentMicroServices.Controllers
         {
             _compundRepository = compundRepository;
         }
-        [HttpPost("CreateCompund")]
+
+        [HttpGet("GetallDetails")]
+        public async Task<object> Get()
+        {
+            try
+            {
+                var compund = await _compundRepository.GetAll();
+                return Ok(compund);
+                
+
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+            [HttpPost("CreateCompund")]
         public async Task<ActionResult<CompundDto>>Create([FromBody] CompundDto compundDto)
         {
             try

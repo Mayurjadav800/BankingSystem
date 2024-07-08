@@ -40,6 +40,12 @@ namespace PaymentMicroServices.Repository
              await _paymentDbContext.SaveChangesAsync();
             return _mapper.Map<CompundDto>(compund);
         }
+
+        public async Task<List<CompundDto>> GetAll()
+        {
+            var compund = await _paymentDbContext.Compund.ToListAsync();
+            return _mapper.Map<List<CompundDto>>(compund);
+        }
     }
 }
 
